@@ -56,13 +56,13 @@ function makeObjectArray(array, key) {
     return array;
 }
 
-function findInObjectArray(array, obj, key, caseInsesitive) {
+function findInObjectArray(array, obj, key, caseInsensitive) {
     var item = null;
     for (var i = 0; i < array.length; i++) {
-        if(caseInsesitive && safeToString(array[i][key]) === safeToString(obj[key])) {
+        if(caseInsensitive && safeToString(array[i][key]) === safeToString(obj[key])) {
             item = array[i];
             break;
-        } else if(!caseInsesitive && safeToString(array[i][key]).toLocaleLowerCase() === safeToString(obj[key]).toLocaleLowerCase()) {
+        } else if(!caseInsensitive && safeToString(array[i][key]).toLocaleLowerCase() === safeToString(obj[key]).toLocaleLowerCase()) {
             item = array[i];
             break;
         }
