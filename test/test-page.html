@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html ng-app="app">
+<head>
+  <title>ngTagsInput Test Page</title>
+  <script type="text/javascript" src="lib/angular.js"></script>
+  <script type="text/javascript" src="../build/ng-tags-input.js"></script>
+  <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap.min.css">
+  <link rel="stylesheet" href="../build/ng-tags-input.css"/>
+  <link rel="stylesheet" href="../build/ng-tags-input.bootstrap.css"/>
+  <style>
+    .foo .tags .input {
+      font-size: 16px;
+      font-weight: bold;
+      letter-spacing: 4px;
+      border-left: 3px solid;
+      padding-left: 3px;
+    }
+
+    .foo .tags .input {
+      width: 1036px;
+      
+    }
+    
+    .foo .tags .tag-item {
+      height: 50px;
+    }
+
+    .foo.ng-pristine .tags {
+      background-color: green;
+    }
+    .foo.ng-dirty .tags {
+      background-color: brown;
+    }
+    .foo.ng-valid .tags {
+      background-color: yellow;
+    }
+    .foo.ng-invalid .tags {
+      background-color: red;
+    }
+
+    .foo .autocomplete .suggestion-item.selected {
+      background-color: green;
+    }
+  </style>
+</head>
+<body ng-controller="Ctrl">
+    <p></p>
+    <tags-input ng-model="tags" add-on-blur="false" ng-focus="focus()" ng-blur="blur()" add-on-paste="true" paste-split-pattern="[,;|]" spellcheck="false">
+        <auto-complete source="loadItems($query)" load-on-down-arrow="true"></auto-complete>
+    </tags-input>
+    <p></p>
+    <div class="input-group" style="width: 600px">
+        <span class="input-group-addon">@</span>
+        <tags-input ng-model="tags">
+            <auto-complete source="loadItems($query)" load-on-down-arrow="true"></auto-complete>
+        </tags-input>
+        <span class="input-group-addon">.00</span>
+    </div>
+    <p></p>
+    <div class="input-group input-group-lg" style="width: 600px">
+        <span class="input-group-addon">@</span>
+        <tags-input ng-model="tags">
+            <auto-complete source="loadItems($query)" load-on-down-arrow="true"></auto-complete>
+        </tags-input>
+        <span class="input-group-addon">.00</span>
+    </div>
+<p></p>
+    <div class="input-group input-group-sm" style="width: 600px">
+        <span class="input-group-addon">@</span>
+        <tags-input ng-model="tags">
+            <auto-complete source="loadItems($query)" load-on-down-arrow="true"></auto-complete>
+        </tags-input>
+        <span class="input-group-addon">.00</span>
+    </div>
+    <p></p>
+    <div class="form-group has-success has-feedback" style="width: 500px">
+        <label class="control-label" for="inputSuccess2">Input with success</label>
+        <tags-input ng-model="tags">
+            <auto-complete source="loadItems($query)" load-on-down-arrow="true"></auto-complete>
+        </tags-input>
+        <span class="glyphicon glyphicon-ok form-control-feedback"></span>
+    </div>
+    <div class="form-group has-error has-feedback" style="width: 500px">
+      <label class="control-label" for="inputSuccess2">Input with success</label>
+      <tags-input ng-model="tags">
+        <auto-complete source="loadItems($query)" load-on-down-arrow="true"></auto-complete>
+      </tags-input>
+      <span class="glyphicon glyphicon-remove form-control-feedback"></span>
+    </div>
+    <div class="form-group has-success has-feedback" style="width: 500px">
+      <label class="control-label" for="inputSuccess2">Input with success</label>
+      <input type="text" class="form-control"/>
+      <span class="glyphicon glyphicon-ok form-control-feedback"></span>
+    </div>
+  <script type="text/javascript">
+    angular.module('app', ['ngTagsInput'])
+        .controller('Ctrl', function($scope, $q) {
+            var superheroes = [
+              { text: 'Batman <bruce@wayne.com>' },
+              { text: 'Superman' },
+              { text: 'Flash' },
+              { text: 'Iron Man' },
+              { text: 'Hulk' },
+              { text: 'Wolverine' },
+              { text: 'Green Lantern' },
+              { text: 'Green Arrow' },
+              { text: 'Spiderman'}
+            ];
+
+            $scope.tags = [{ text: 'Batman' }, { text: 'Superman' }, { text:'Flash' }];
+            $scope.placeholder = 'New tag';
+            $scope.loadItems = function(query) {
+              var deferred = $q.defer();
+              var items = [];
+              for (var i = 0; i < superheroes.length; i++) {
+                if (superheroes[i].text.indexOf(query) > -1) {
+                  items.push(superheroes[i]);
+                }
+              }
+              deferred.resolve(items);
+              return deferred.promise;
+            };
+        $scope.focus = function() {
+            console.log('focus');
+        };
+
+        $scope.blur = function() {
+          console.log('blur');
+        };
+        })
+        .directive('limitTags', function() {
+          return {
+            require: 'ngModel',
+            link: function(scope, elem, attrs, ngModel) {
+                var max = parseInt(attrs.limitTags, 10);
+                ngModel.$parsers.unshift(function(value) {
+                    if (value && value.length > max) {
+                      value.splice(value.length - 1, 1);
+                    }
+                    return value;
+                });
+            }
+          };
+        })
+        .config(function(tagsInputConfigProvider) {
+            tagsInputConfigProvider
+              .setDefaults('tagsInput', {
+                placeholder: 'New tag'
+              })
+              .setDefaults('autoComplete', {
+                highlightMatchedText: true
+              })
+              .setActiveInterpolation('tagsInput', {
+                placeholder: true,
+                removeTagSymbol: true,
+                addOnEnter: true,
+                allowLeftoverText: true,
+                maxTags: true,
+                minTags: true,
+                type: true
+              });
+        });
+  </script>
+</body>
+</html>
